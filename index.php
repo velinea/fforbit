@@ -3,20 +3,13 @@
 <head>
 <meta charset="utf-8">
 <title>FFOrbit Web</title>
-<style>
-body { font-family: sans-serif; margin: 2em; background:#111; color:#ddd; }
-a { color:#9cf; text-decoration:none; }
-a:hover { text-decoration:underline; }
-input, button { padding:.4em; font-size:1em; margin:.2em 0; }
-pre { background:#000; color:#0f0; padding:1em; overflow-x:auto; }
-fieldset { border:1px solid #333; margin-top:1.5em; padding:1em; }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <h1>🎬 FFOrbit – Simple FFmpeg Web UI</h1>
 
-<!-- 🔍 Search box -->
+<!-- 🔍 Search -->
 <form method="get">
   <fieldset>
     <legend>Search movie</legend>
@@ -71,6 +64,8 @@ if (isset($_GET['search']) && $_GET['search'] !== '') {
 </form>
 
 <?php
+$logFile = '/app/history.log'; // you can change to /data/media/history.log if you mount it
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $path   = escapeshellarg($_POST['path']);
   $track  = escapeshellarg($_POST['track']);
@@ -84,10 +79,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   echo "<h2>Output:</h2><pre>";
   ob_flush(); flush();
-  passthru($cmd);
+  passthru($cmd, $status);
   echo "</pre>";
+
+  // Append to history log
+  $now = date("Y-m-d H:i:s");
+  $entry = "$now | " . $_POST['path'] . " | track:" . $_POST['track'] . " | lang:" . $_POST['lang'] . " | video:$video | audio:$audio | q:$gq | status:" . ($status === 0 ? "✅ OK" : "❌ FAIL") . "\n";
+  file_put_contents($logFile, $entry, FILE_APPEND);
 }
 ?>
+
+<!-- 📜 History Log -->
+<?php
+if (file_exists($logFile)) {
+  $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+  $lines = array_slice(array_reverse($lines), 0, 20); // last 20 entries
+  echo "<fieldset><legend>Recent Jobs</legend>";
+  echo "<table style='width:100%; border-collapse:collapse;'>";
+  echo "<tr><th align='left'>Timestamp</th><th align='left'>File</th><th>Result</th></tr>";
+  foreach ($lines as $line) {
+    $parts = explode('|', $line);
+    echo "<tr>";
+    echo "<td style='width:160px;'>".trim($parts[0] ?? '')."</td>";
+    echo "<td>".htmlspecialchars(trim($parts[1] ?? '')) ."</td>";
+    echo "<td align='center'>".(str_contains($line, 'OK') ? "✅" : "❌")."</td>";
+    echo "</tr>";
+  }
+  echo "</table></fieldset>";
+}
+?>
+
+<footer>
+  <hr>
+  <p>FFOrbit Web – Part of the <strong>Orbit</strong> family © 2025</p>
+</footer>
 
 </body>
 </html>
