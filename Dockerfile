@@ -6,8 +6,8 @@ WORKDIR /app
 
 # PHP + VAAPI tools on Alpine
 RUN apk add --no-cache \
-      php81 php81-cli php81-xml php81-mbstring \
-      libva-utils intel-media-driver
+      php81 php81-cli php81-xml php81-mbstring 
+#      libva-utils intel-media-driver
 
 COPY index.php /app/
 COPY transcode.sh /usr/local/bin/transcode.sh
