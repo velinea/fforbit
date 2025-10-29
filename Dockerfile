@@ -12,7 +12,7 @@ RUN rm -rf /etc/services.d/jellyfin
 # Install PHP (lightweight, no Apache)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends vim php-cli php-common php-xml php-mbstring && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+    apt-get clean 
 
 # Copy your UI and script
 COPY index.php /app/
