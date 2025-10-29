@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.source="https://github.com/velinea/fforbit-php"
 WORKDIR /app
 
 # Remove heavy Jellyfin components
-RUN apt-get /etc/services.d/jellyfin
+RUN rm -rf /etc/services.d/jellyfin
 
 # Install PHP (lightweight, no Apache)
 RUN apt-get update && \
