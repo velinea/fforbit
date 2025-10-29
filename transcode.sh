@@ -32,7 +32,7 @@ echo "Video: $TR_VIDEO  Audio: $TR_AUDIO  Quality: $GQ"
 mkdir -p /data/media/tmp
 [ -f "$TMP" ] && rm "$TMP"
 
-ffmpeg -vaapi_device /dev/dri/renderD128 \
+/usr/lib/jellyfin-ffmpeg/ffmpeg -vaapi_device /dev/dri/renderD128 \
   -i "$FILE" -metadata Title="$MOVIE" -metadata Comment="" \
   -metadata:s:a:0 language="$LANG" \
   -map 0:v:0 -map 0:a:$ATRACK $AUDIOMAP $VIDEOMAP "$TMP"

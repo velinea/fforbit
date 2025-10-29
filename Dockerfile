@@ -16,6 +16,7 @@ RUN apt-get update && \
 
 # Copy your UI and script
 COPY index.php /app/
+COPY style.css /app/
 COPY transcode.sh /usr/local/bin/transcode.sh
 RUN chmod +x /usr/local/bin/transcode.sh
 
