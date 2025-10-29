@@ -29,10 +29,10 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/fforbit-php:latest
+          tags: ghcr.io/${{ github.repository_owner }}/fforbit:latest
           platforms: linux/amd64
           build-args: |
             BUILDKIT_INLINE_CACHE=1
 
       - name: Verify
-        run: echo "✅ Pushed ghcr.io/${{ github.repository_owner }}/fforbit-php:latest"
+        run: echo "✅ Pushed ghcr.io/${{ github.repository_owner }}/fforbit:latest"
