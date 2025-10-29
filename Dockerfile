@@ -8,7 +8,7 @@ LABEL org.opencontainers.image.description="FFOrbit – lightweight FFmpeg web U
 WORKDIR /app
 
 # Remove heavy Jellyfin components
-RUN rm -rf /etc/services.d/jellyfin
+# RUN rm -rf /etc/services.d/jellyfin
 
 # Install PHP (lightweight, no Apache)
 RUN apt-get update && \
