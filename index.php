@@ -64,7 +64,13 @@ if (isset($_GET['search']) && $_GET['search'] !== '') {
 </form>
 
 <?php
-$logFile = '/app/history.log'; // you can change to /data/media/history.log if you mount it
+$logFile = '/app/config/history.log'; 
+$defaultsFile = '/app/config/defaults.json';
+if (file_exists($defaultsFile)) {
+    $defaults = json_decode(file_get_contents($defaultsFile), true);
+    // Apply defaults to form values
+}
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $path   = escapeshellarg($_POST['path']);
