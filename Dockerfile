@@ -12,7 +12,8 @@ WORKDIR /app
 
 # Install PHP (lightweight, no Apache)
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends vim php-cli php-common php-xml php-mbstring && \
+    apt-get install -y --no-install-recommends \
+            vim bc php-cli php-common php-xml php-mbstring && \
     apt-get clean 
 
 # Copy your UI and script

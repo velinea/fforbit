@@ -8,25 +8,33 @@ usage() {
 
 [ $# -eq 1 ] || usage
 
-# --- Ask basic options -------------------------------------------------------
-read -n1 -p "Transcode video [y/N]: " TR
-TR=${TR:-N}
-VIDEOMAP="-c:v copy"
+INTERACTIVE=false
+if [ -t 0 ]; then
+  INTERACTIVE=true
+fi
 
-echo
-read -n1 -p "Original language audio track [0]: " ATRACK
-ATRACK=${ATRACK:-0}
-echo
-read -n3 -p "Audio language code [eng]: " LANG
-LANG=${LANG:-eng}
-echo
-read -n1 -p "Transcode audio [y/N]: " AAC
-AAC=${AAC:-N}
+# --- Helper for prompts ------------------------------------------------------
+ask() {
+  local prompt=$1 default=$2 var
+  if $INTERACTIVE; then
+    read -rp "$prompt [$default]: " var
+    echo "${var:-$default}"
+  else
+    echo "$default"
+  fi
+}
+
+# --- Collect options ---------------------------------------------------------
+TR=$(ask "Transcode video (y/N)" "y")
+ATRACK=$(ask "Original language audio track" "0")
+LANG=$(ask "Audio language code" "eng")
+AAC=$(ask "Transcode audio (y/N)" "n")
+
+VIDEOMAP="-c:v copy"
 AUDIOMAP="-c:a copy"
 [[ "$AAC" == "y" ]] && AUDIOMAP="-c:a aac -ac 6"
-echo
 
-# --- Path setup --------------------------------------------------------------
+# --- Paths -------------------------------------------------------------------
 FILE=$(basename "$1")
 MOVIE=$(basename "$(dirname "$1")")
 EXT="${FILE##*.}"
@@ -38,27 +46,22 @@ SRC_BITRATE_RAW=$(/usr/lib/jellyfin-ffmpeg/ffprobe -v error \
 SRC_MBPS=$(awk "BEGIN {printf \"%.1f\", $SRC_BITRATE_RAW / 1000000}")
 echo "📊 Source bitrate: ${SRC_MBPS} Mb/s"
 
-# Suggest global_quality to reach ≈3 Mb/s output
-if (( $(echo "$SRC_MBPS <= 4" | bc -l) )); then
-  SUGQ=23
-elif (( $(echo "$SRC_MBPS <= 8" | bc -l) )); then
-  SUGQ=25
-elif (( $(echo "$SRC_MBPS <= 12" | bc -l) )); then
-  SUGQ=27
-elif (( $(echo "$SRC_MBPS <= 20" | bc -l) )); then
-  SUGQ=29
-else
-  SUGQ=31
-fi
-echo "💡 Suggested global quality: $SUGQ (target ≈ 3 Mb/s output)"
+# Suggest global_quality (≈3 Mb/s target)
+if (( $(echo "$SRC_MBPS <= 4" | bc -l) )); then SUGQ=23
+elif (( $(echo "$SRC_MBPS <= 8" | bc -l) )); then SUGQ=25
+elif (( $(echo "$SRC_MBPS <= 12" | bc -l) )); then SUGQ=27
+elif (( $(echo "$SRC_MBPS <= 20" | bc -l) )); then SUGQ=29
+else SUGQ=31; fi
 
 if [[ "$TR" == "y" ]]; then
-  read -n2 -p "Global quality [$SUGQ]: " GQ
-  GQ=${GQ:-$SUGQ}
-  VIDEOMAP="-vf format=nv12,hwupload \
-    -c:v hevc_vaapi -rc_mode CQP -global_quality $GQ -profile:v main"
+  GQ=$(ask "Global quality" "$SUGQ")
+  VIDEOMAP="-vf format=nv12,hwupload -c:v hevc_vaapi \
+    -rc_mode CQP -global_quality $GQ -profile:v main"
+else
+  GQ=$SUGQ
 fi
-echo
+
+echo "💡 Using global_quality=$GQ (suggested $SUGQ)"
 
 # --- Temp handling -----------------------------------------------------------
 TMPDIR=${TMPDIR:-/tmp}
@@ -67,11 +70,10 @@ TMPFILE=$(mktemp --suffix=".$EXT" "$TMPDIR/fforbit.XXXXXX")
 trap 'rm -f "$TMPFILE"' EXIT
 
 echo "🎬 Transcoding: $MOVIE"
-echo "Temp file: $TMPFILE"
 echo
 
 # --- Run ffmpeg --------------------------------------------------------------
-/usr/lib/jellyfin-ffmpeg/ffmpeg -vaapi_device /dev/dri/renderD128 \
+/usr/lib/jellyfin-ffmpeg/ffmpeg -hide_banner -vaapi_device /dev/dri/renderD128 \
   -i "$1" \
   -metadata Title="$MOVIE" -metadata Comment="" \
   -metadata:s:a:0 language=$LANG \
@@ -83,7 +85,7 @@ BITRATE_RAW=$(/usr/lib/jellyfin-ffmpeg/ffprobe -v error \
   -select_streams v:0 -show_entries stream=bit_rate \
   -of default=noprint_wrappers=1:nokey=1 "$TMPFILE" || echo 0)
 BITRATE_MBPS=$(awk "BEGIN {printf \"%.2f\", $BITRATE_RAW / 1000000}")
-echo "✅ Average output bitrate: ${BITRATE_MBPS} Mb/s"
+echo "✅ Output bitrate: ${BITRATE_MBPS} Mb/s"
 
 # --- Replace original --------------------------------------------------------
 mv -f "$TMPFILE" "$1"
