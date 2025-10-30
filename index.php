@@ -1,3 +1,35 @@
+<?php
+// --- Handle Stop button ------------------------------------------------------
+if (isset($_GET['stop'])) {
+    $pidFile = '/app/config/current.pid';
+    header('Content-Type: text/html; charset=utf-8');
+    echo "<body style='font-family: monospace; background: #0d1117; color: #eee; padding: 2rem;'>";
+
+    if (file_exists($pidFile)) {
+        $pid = (int)trim(file_get_contents($pidFile));
+        if ($pid > 0) {
+            posix_kill($pid, SIGTERM);
+            echo "<p>⛔ <strong>Transcode stopped</strong> (PID $pid).</p>";
+        } else {
+            echo "<p>⚠️ No valid PID found.</p>";
+        }
+    } else {
+        echo "<p>⚠️ No active transcode file found.</p>";
+    }
+    echo "<a href='/' style='color:#4CB5FF'>← Back</a>";
+    echo "</body></html>";
+    exit;
+}
+
+// --- Handle Start button -----------------------------------------------------
+$output = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['path'])) {
+    $videoPath = escapeshellarg($_POST['path']);
+    $cmd = "/app/transcode.sh $videoPath 2>&1";
+    $output = shell_exec($cmd);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,26 +38,10 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<h1>🎬 FFOrbit – Simple FFmpeg Web UI</h1>
-
-<?php
-if (isset($_GET['stop'])) {
-    $pidFile = '/app/config/current.pid';
-    if (file_exists($pidFile)) {
-        $pid = (int)trim(file_get_contents($pidFile));
-        if ($pid > 0) {
-            posix_kill($pid, SIGTERM);
-            echo "<p>⛔ Transcode stopped (PID $pid).</p>";
-        } else {
-            echo "<p>⚠️ No active transcode PID found.</p>";
-        }
-    } else {
-        echo "<p>⚠️ No active transcode file found.</p>";
-    }
-    exit;
-}
-?>
+<header>
+<img src="fforbit.png" alt="Logo">
+<h1>FFOrbit – Simple FFmpeg Web UI</h1>
+</header>
 
 <!-- 🔍 Search -->
 <form method="get">
@@ -145,10 +161,7 @@ if (file_exists($logFile)) {
 
 ?>
 
-<footer>
-  <hr>
-  <p>FFOrbit Web – Part of the <strong>Orbit</strong> family © 2025</p>
-</footer>
+ <footer>FFOrbit &middot; Orbit Family Project &middot; <?= date('Y') ?></footer>
 
 </body>
 </html>

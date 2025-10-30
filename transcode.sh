@@ -13,7 +13,7 @@ if [ -t 0 ]; then
 fi
 
 # --- Temp handling -----------------------------------------------------------
-TMPDIR=${TMPDIR:-/app/config/tmp}
+TMPDIR="/app/config/tmp"
 mkdir -p "$TMPDIR"
 TMPFILE="$TMPDIR/$(basename "$1").$$.tmp.mkv"
 
