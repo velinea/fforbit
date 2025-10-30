@@ -19,7 +19,9 @@ RUN apt-get update && \
 # Copy your UI and script
 COPY index.php /app/
 COPY style.css /app/
+COPY fforbit.png /app/
 COPY transcode.sh /usr/local/bin/transcode.sh
+COPY includes/ /app/includes/
 RUN chmod +x /usr/local/bin/transcode.sh
 
 # Create config directory (for logs and defaults)

@@ -1,8 +1,7 @@
 /* ==============================
    FFOrbit – Orbit Dark Console Theme
    ============================== 
-*/(
-
+*/
 :root {
   --bg: #0f1115;
   --bg-panel: #181b22;
@@ -15,7 +14,8 @@
   --radius: 10px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
-/*
+
+
 
 body {
   font-family: var(--font);
@@ -145,72 +145,12 @@ button.danger {
 button.danger:hover {
   background: #b00;
 }
-/
-
-body {
-  font-family: system-ui, sans-serif;
-  background: #0d1117;
-  color: #e6edf3;
-  padding: 2rem;
-  max-width: 800px;
-  margin: auto;
-}
-h1 {
-  font-size: 1.8rem;
-  color: #4CB5FF;
-  text-align: center;
+#status-line {
+  font-size: 1rem;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.5rem;
+  display: inline-block;
   margin-bottom: 1rem;
 }
-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-input[type="text"] {
-  flex: 1;
-  padding: 0.6rem;
-  border-radius: 6px;
-  border: 1px solid #30363d;
-  background: #161b22;
-  color: #fff;
-  min-width: 350px;
-}
-button {
-  padding: 0.6rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-}
-button.start {
-  background: #238636;
-  color: white;
-}
-button.start:hover {
-  background: #2ea043;
-}
-button.stop {
-  background: #d33;
-  color: white;
-}
-button.stop:hover {
-  background: #b00;
-}
-pre {
-  background: #161b22;
-  padding: 1rem;
-  border-radius: 8px;
-  white-space: pre-wrap;
-  line-height: 1.4;
-  font-size: 0.9rem;
-  border: 1px solid #30363d;
-  color: #c9d1d9;
-}
-footer {
-  text-align: center;
-  margin-top: 2rem;
-  font-size: 0.8rem;
-  color: #777;
-}  */
