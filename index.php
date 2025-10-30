@@ -33,7 +33,9 @@ if (isset($_GET['search']) && $_GET['search'] !== '') {
   if ($out) {
     foreach ($out as $line) {
       $href = htmlspecialchars($_SERVER['PHP_SELF'])."?path=".urlencode($line);
-      echo "<li><a href='$href'>".htmlspecialchars($line)."</a></li>";
+      $short = basename($line);
+echo  "<li><a href='$href' title='".htmlspecialchars($line)."'>".htmlspecialchars($short)."</a></li>";
+
     }
   } else {
     echo "<p>No matches found.</p>";
