@@ -8,7 +8,7 @@ if (isset($_GET['stop'])) {
     if (file_exists($pidFile)) {
         $pid = (int)trim(file_get_contents($pidFile));
         if ($pid > 0) {
-            posix_kill($pid, SIGTERM);
+            exec("kill -9 $pid");
             echo "<p>⛔ <strong>Transcode stopped</strong> (PID $pid).</p>";
         } else {
             echo "<p>⚠️ No valid PID found.</p>";
