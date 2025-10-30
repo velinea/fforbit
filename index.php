@@ -20,6 +20,11 @@
 </form>
 
 <?php
+if (preg_match('#^/health$#', $_SERVER['REQUEST_URI'])) {
+    header("Content-Type: text/plain");
+    echo "OK";
+    exit;
+}
 $selectedPath = $_GET['path'] ?? '';
 if (isset($_GET['search']) && $_GET['search'] !== '') {
   $term = escapeshellarg($_GET['search']);

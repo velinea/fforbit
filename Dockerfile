@@ -25,8 +25,16 @@ RUN chmod +x /usr/local/bin/transcode.sh
 RUN mkdir -p /app/config && chmod -R 777 /app/config
 VOLUME ["/app/config"]
 
-# Strip docs and man pages for smaller image
+# Stop s6 from trying to start user services
+RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/*
+
+# Clean up to shrink image size
 RUN rm -rf /usr/share/doc /usr/share/man /usr/share/locale /tmp/* /var/tmp/*
 
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD curl -fs http://localhost:8080/health || exit 1
+
 EXPOSE 8080
+ENTRYPOINT []
 CMD ["php", "-S", "0.0.0.0:8080", "-t", "/app"]
