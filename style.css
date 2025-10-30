@@ -132,3 +132,14 @@ footer {
   color: #888;
   margin-top: 2em;
 }
+button.danger {
+  background: #d33;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+button.danger:hover {
+  background: #b00;
+}

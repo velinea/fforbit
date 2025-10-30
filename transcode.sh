@@ -6,11 +6,20 @@ usage() {
   exit 1
 }
 
-[ $# -eq 1 ] || usage
-
+# --- Check if interactive ----------------------------------------------------
 INTERACTIVE=false
 if [ -t 0 ]; then
   INTERACTIVE=true
+fi
+
+# --- Temp handling -----------------------------------------------------------
+TMPDIR=${TMPDIR:-/app/config/tmp}
+mkdir -p "$TMPDIR"
+TMPFILE="$TMPDIR/$(basename "$1").$$.tmp.mkv"
+
+# --- Argument check ----------------------------------------------------------
+if $INTERACTIVE; then
+  [ $# -eq 1 ] || usage
 fi
 
 # --- Helper for prompts ------------------------------------------------------
@@ -23,6 +32,37 @@ ask() {
     echo "$default"
   fi
 }
+
+# --- Sanity checks -----------------------------------------------------------
+VIDEO_CODEC=$(/usr/lib/jellyfin-ffmpeg/ffprobe -v error -select_streams v:0 \
+  -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$1" | head -n1)
+
+AUDIO_CODEC=$(/usr/lib/jellyfin-ffmpeg/ffprobe -v error -select_streams a:0 \
+  -show_entries stream=codec_name -of default=noprint_wrappers=1:nokey=1 "$1" | head -n1)
+
+FILE_SIZE=$(stat -c%s "$1")
+MIN_SIZE=$((300 * 1024 * 1024))   # 300 MB threshold, configurable later
+
+if [[ "$VIDEO_CODEC" == "hevc" ]]; then
+  echo "ℹ️  Video already H.265 — skipping video transcode."
+  TR="n"
+fi
+
+if [[ "$AUDIO_CODEC" == "aac" ]]; then
+  echo "ℹ️  Audio already AAC — skipping audio transcode."
+  AAC="n"
+fi
+
+if (( FILE_SIZE < MIN_SIZE )); then
+  echo "⚠️  File smaller than expected ($((FILE_SIZE/1024/1024)) MB)."
+  if $INTERACTIVE; then
+    read -n1 -p "Continue anyway? [y/N]: " ANS
+    [[ "${ANS:-N}" == "y" ]] || exit 0
+  else
+    echo "Proceeding (non-interactive mode)."
+  fi
+fi
+
 
 # --- Collect options ---------------------------------------------------------
 TR=$(ask "Transcode video (y/N)" "y")
@@ -63,16 +103,13 @@ fi
 
 echo "💡 Using global_quality=$GQ (suggested $SUGQ)"
 
-# --- Temp handling -----------------------------------------------------------
-TMPDIR=${TMPDIR:-/tmp}
-mkdir -p "$TMPDIR"
-TMPFILE=$(mktemp --suffix=".$EXT" "$TMPDIR/fforbit.XXXXXX")
-trap 'rm -f "$TMPFILE"' EXIT
 
+# --- Start --------------------------------------------------------------------
 echo "🎬 Transcoding: $MOVIE"
 echo
 
 # --- Run ffmpeg --------------------------------------------------------------
+echo $$ > /app/config/current.pid
 /usr/lib/jellyfin-ffmpeg/ffmpeg -hide_banner -vaapi_device /dev/dri/renderD128 \
   -i "$1" \
   -metadata Title="$MOVIE" -metadata Comment="" \
@@ -88,7 +125,15 @@ BITRATE_MBPS=$(awk "BEGIN {printf \"%.2f\", $BITRATE_RAW / 1000000}")
 echo "✅ Output bitrate: ${BITRATE_MBPS} Mb/s"
 
 # --- Replace original --------------------------------------------------------
-mv -f "$TMPFILE" "$1"
+if [ -s "$TMPFILE" ]; then
+  mv -f "$TMPFILE" "$1"
+else
+  echo "❌ Temp file invalid or zero bytes — original not replaced."
+  rm -f "$TMPFILE"
+  exit 1
+fi
+
+# --- Finalize ----------------------------------------------------------------
 chown 99:100 "$1"
 chmod a+w "$1"
 

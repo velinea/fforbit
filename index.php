@@ -9,6 +9,24 @@
 
 <h1>🎬 FFOrbit – Simple FFmpeg Web UI</h1>
 
+<?php
+if (isset($_GET['stop'])) {
+    $pidFile = '/app/config/current.pid';
+    if (file_exists($pidFile)) {
+        $pid = (int)trim(file_get_contents($pidFile));
+        if ($pid > 0) {
+            posix_kill($pid, SIGTERM);
+            echo "<p>⛔ Transcode stopped (PID $pid).</p>";
+        } else {
+            echo "<p>⚠️ No active transcode PID found.</p>";
+        }
+    } else {
+        echo "<p>⚠️ No active transcode file found.</p>";
+    }
+    exit;
+}
+?>
+
 <!-- 🔍 Search -->
 <form method="get">
   <fieldset>
@@ -70,6 +88,10 @@ echo  "<li><a href='$href' title='".htmlspecialchars($line)."'>".htmlspecialchar
   </fieldset>
 </form>
 
+<form id="stopForm" method="get" action="">
+  <button type="submit" name="stop" value="1" class="danger">⛔ Stop</button>
+</form>
+
 <?php
 $logFile = '/app/config/history.log'; 
 $defaultsFile = '/app/config/defaults.json';
@@ -120,6 +142,7 @@ if (file_exists($logFile)) {
   }
   echo "</table></fieldset>";
 }
+
 ?>
 
 <footer>

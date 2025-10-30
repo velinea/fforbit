@@ -39,3 +39,10 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
 EXPOSE 8080
 ENTRYPOINT []
 CMD ["php", "-S", "0.0.0.0:8080", "-t", "/app"]
+
+LABEL org.opencontainers.image.title="FFOrbit"
+LABEL org.opencontainers.image.description="Simple FFmpeg Web UI."
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.url="https://github.com/velinea/fforbit"
+LABEL io.unraid.docker.icon="https://raw.githubusercontent.com/velinea/fforbit/main/fforbit/fforbit.png"
+
