@@ -154,3 +154,8 @@ button.danger:hover {
   display: inline-block;
   margin-bottom: 1rem;
 }
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}

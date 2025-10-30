@@ -37,6 +37,8 @@ RUN rm -rf /usr/share/doc /usr/share/man /usr/share/locale /tmp/* /var/tmp/*
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD curl -fs http://localhost:8080/health || exit 1
+# Reset log on container start
+RUN echo "🛰️ FFOrbit ready — no active jobs." > /app/config/last.log
 
 EXPOSE 8080
 ENTRYPOINT []
