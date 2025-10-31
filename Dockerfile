@@ -23,7 +23,7 @@ COPY fforbit.png /app/
 COPY api.php /app/
 COPY transcode.sh /app
 COPY includes/ /app/includes/
-RUN chmod +x /usr/local/bin/transcode.sh
+RUN chmod +x /app/transcode.sh
 
 # Create config directory (for logs and defaults)
 RUN mkdir -p /app/config && chmod -R 777 /app/config
