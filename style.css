@@ -154,7 +154,6 @@ button.danger:hover {
 }
 #logo {
   display: inline-block;
-  float: left;
   }
 #status-line {
   font-size: 1rem;
@@ -162,7 +161,6 @@ button.danger:hover {
   border: 1px solid #30363d;
   border-radius: 6px;
   padding: 0.5rem;
-  display: inline-block;
   float: right;
   margin-bottom: 1rem;
 }

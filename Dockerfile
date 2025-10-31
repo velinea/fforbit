@@ -20,7 +20,8 @@ RUN apt-get update && \
 COPY index.php /app/
 COPY style.css /app/
 COPY fforbit.png /app/
-COPY transcode.sh /usr/local/bin/transcode.sh
+COPY api.php /app/
+COPY transcode.sh /app
 COPY includes/ /app/includes/
 RUN chmod +x /usr/local/bin/transcode.sh
 
