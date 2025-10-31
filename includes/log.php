@@ -5,7 +5,7 @@
 
 <script>
 function refreshLog() {
-  fetch('includes/lastlog.php?t=' + Date.now())
+  fetch('api.php?action=log&t=' + Date.now())
     .then(r => r.text())
     .then(txt => {
       const logEl = document.getElementById('logText');

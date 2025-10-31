@@ -11,35 +11,68 @@ if (isset($_GET['stop'])) {
 <section id="transcode">
   <h2>Transcode</h2>
 
-  <form id="transcodeForm" method="post">
-    <div style="display:flex; gap:0.5rem; justify-content:center;">
-      <input type="text" id="videoPath" name="path" placeholder="/data/media/Movies/...">
-      <button type="button" id="browseButton">📂</button>
-      <button type="submit" id="startButton" class="start" disabled>🚀 Start</button>
-    </div>
-  </form>
-
-  <form method="get" id="stopForm">
-      <button type="submit" name="stop" value="1" class="stop">⛔ Stop</button>
-  </form>
-
-  <div id="picker" style="display:none; background:#161b22; border:1px solid #30363d; border-radius:8px; padding:0.5rem; margin-top:0.5rem; max-height:200px; overflow:auto;"></div>
+  <div style="display:flex; gap:0.5rem; justify-content:center;">
+    <input type="text" id="videoPath" placeholder="/data/media/Movies/...">
+    <button id="startButton" class="start" disabled>🚀 Start</button>
+    <button id="stopButton" class="stop">⛔ Stop</button>
+  </div>
 </section>
 
 <script>
-// --- Enable/disable Start button --------------------------------------------
-const pathInput = document.getElementById('videoPath');
-const startBtn = document.getElementById('startButton');
-const picker = document.getElementById('picker');
+const pathInput  = document.getElementById('videoPath');
+const startBtn   = document.getElementById('startButton');
+const stopBtn    = document.getElementById('stopButton');
+const logText    = document.getElementById('logText');
 
 function updateButtonState() {
-  const value = pathInput.value.trim();
-  startBtn.disabled = (value === '');
-  startBtn.style.opacity = startBtn.disabled ? '0.5' : '1';
-  startBtn.style.cursor = startBtn.disabled ? 'not-allowed' : 'pointer';
+  startBtn.disabled = (pathInput.value.trim() === '');
 }
-updateButtonState();
 pathInput.addEventListener('input', updateButtonState);
+updateButtonState();
+
+// --- Start ---------------------------------------------------------------
+startBtn.addEventListener('click', () => {
+  const path = pathInput.value.trim();
+  if (!path) return;
+  fetch('api.php?action=start&path=' + encodeURIComponent(path))
+    .then(r => r.text()).then(msg => {
+      appendLog(msg + "\n");
+      refreshStatus();
+    });
+});
+
+// --- Stop ---------------------------------------------------------------
+stopBtn.addEventListener('click', () => {
+  fetch('api.php?action=stop')
+    .then(r => r.text()).then(msg => {
+      appendLog(msg + "\n");
+      refreshStatus();
+    });
+});
+
+// --- Helpers -------------------------------------------------------------
+function appendLog(line) {
+  if (!logText) return;
+  logText.textContent += line;
+  logText.scrollTop = logText.scrollHeight;
+}
+
+function refreshStatus() {
+  fetch('api.php?action=status')
+    .then(r => r.text())
+    .then(txt => {
+      const statusEl = document.getElementById('status-text');
+      if (statusEl) {
+        if (txt.startsWith('running')) {
+          const pid = txt.split(':')[1];
+          statusEl.textContent = '🟢 Running (PID ' + pid + ')';
+        } else {
+          statusEl.textContent = '🔴 Idle';
+        }
+      }
+    });
+}
+setInterval(refreshStatus, 5000);
 
 // --- Simple file picker ------------------------------------------------------
 document.getElementById('browseButton').addEventListener('click', () => {

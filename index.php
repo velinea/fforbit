@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div>
-  <img src="fforbit.png" alt="FFOrbit Logo" height="64">
+  <header>
+  <img src="fforbit.png" alt="FFOrbit Logo" id="logo" height="64">
   <h1>FFOrbit</h1>
-  </div>
+  </header>
   <?php include __DIR__ . '/includes/status.php'; ?>
   <?php include __DIR__ . '/includes/search-form.php'; ?>
   <?php include __DIR__ . '/includes/transcode-controls.php'; ?>

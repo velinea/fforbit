@@ -33,9 +33,11 @@ h1, h2, h3 {
 }
 
 h1 {
-  text-align: center;
   margin-bottom: 1em;
   letter-spacing: 0.05em;
+  display: inline;
+  padding-left: 1em;
+
 }
 
 fieldset {
@@ -46,6 +48,11 @@ fieldset {
   margin-top: 1.5em;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
+
+header {
+  padding: 1em;
+  border: 1px solid;
+  }
 
 legend {
   padding: 0 0.5em;
@@ -145,6 +152,10 @@ button.danger {
 button.danger:hover {
   background: #b00;
 }
+#logo {
+  display: inline-block;
+  float: left;
+  }
 #status-line {
   font-size: 1rem;
   background: #161b22;
@@ -152,6 +163,7 @@ button.danger:hover {
   border-radius: 6px;
   padding: 0.5rem;
   display: inline-block;
+  float: right;
   margin-bottom: 1rem;
 }
 button:disabled {
