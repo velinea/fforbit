@@ -1,0 +1,171 @@
+/* ==============================
+   FFOrbit – Orbit Dark Console Theme
+   ============================== 
+*/
+:root {
+  --bg: #0f1115;
+  --bg-panel: #181b22;
+  --text: #dfe4ea;
+  --accent: #4cb5ff;
+  --accent-soft: #3a9bd6;
+  --danger: #ff6b6b;
+  --success: #2ecc71;
+  --border: #2c313c;
+  --radius: 10px;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  max-width: 900px;
+  margin: 2em auto;
+  padding: 1em;
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+h1 {
+  margin-bottom: 1em;
+  letter-spacing: 0.05em;
+  display: inline;
+  padding-left: 1em;
+
+}
+
+fieldset {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  padding: 1.5em;
+  margin-top: 1.5em;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+header {
+  padding: 1em;
+  border: 1px solid;
+  }
+
+legend {
+  padding: 0 0.5em;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+input, button, select {
+  font-size: 1em;
+  padding: 0.4em 0.6em;
+  margin-top: 0.3em;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: #20242d;
+  color: var(--text);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: #252932;
+}
+
+button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 1em;
+  width: auto;
+  padding: 0.5em 1.5em;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+  background: var(--accent-soft);
+  transform: scale(1.03);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+li {
+  padding: 0.2em 0;
+  border-bottom: 1px solid var(--border);
+}
+
+li:last-child {
+  border-bottom: none;
+}
+
+pre {
+  background: #000;
+  color: #0f0;
+  padding: 1em;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-family: monospace;
+  font-size: 0.95em;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2em 0;
+  opacity: 0.5;
+}
+
+footer {
+  text-align: center;
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 2em;
+}
+button.danger {
+  background: #d33;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+button.danger:hover {
+  background: #b00;
+}
+#logo {
+  display: inline-block;
+  }
+#status-line {
+  font-size: 1rem;
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 0.5rem;
+  float: right;
+  margin-bottom: 1rem;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.4);
+}
