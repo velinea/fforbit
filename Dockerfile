@@ -13,16 +13,12 @@ WORKDIR /app
 # Install PHP (lightweight, no Apache)
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-            vim bc php-cli php-common php-xml php-mbstring && \
+            vim bc && \
     apt-get clean 
 
 # Copy your UI and script
-COPY index.php /app/
-COPY style.css /app/
 COPY fforbit.png /app/
-COPY api.php /app/
 COPY transcode.sh /app
-COPY includes/ /app/includes/
 RUN chmod +x /app/transcode.sh
 
 # Create config directory (for logs and defaults)
