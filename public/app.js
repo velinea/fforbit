@@ -29,15 +29,16 @@ results.addEventListener("click", async (e) => {
   $("#picked").textContent = p;
 
   // probe once and show options
-  const info = await fetch(`/api/probe?path=${encodeURIComponent(p)}`).then(r=>r.json());
-
+  const info = await fetch(`/api/probe?path=${encodeURIComponent(p)}`)
+    .then(r=>r.json());
   // set defaults based on probe
   // video: skip if hevc
   $("#transVideo").checked = !(info.video && info.video.codec === "hevc");
   // audio: show tracks
   const aSel = $("#audioIndex");
   aSel.innerHTML = (info.audio || []).map((a,i) =>
-    `<option value="${a.index}" ${a.default?'selected':''}>#${a.index} ${a.codec||''} ${a.channels||''}ch ${a.lang||'und'}${a.default?' (default)':''}</option>`
+    `<option value="${a.mapIndex}" ${a.default?'selected':''}>
+    #${a.mapIndex} ${a.codec||''} ${a.channels||''}ch ${a.lang||'und'}${a.default?' (default)':''}</option>`
   ).join("");
   // if selected audio is already AAC, uncheck transAudio
   const def = (info.audio || [])[aSel.selectedIndex || 0];

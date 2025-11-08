@@ -111,13 +111,30 @@ app.get("/api/probe", async (req, res) => {
     const aStreams = info.streams.filter(s => s.codec_type === "audio");
     const format = info.format || {};
 
-    const audioList = aStreams.map((s, idx) => ({
-      index: s.index,
-      codec: s.codec_name,
-      channels: s.channels,
-      lang: (s.tags && (s.tags.language || s.tags.LANGUAGE)) || "und",
-      default: s.disposition && s.disposition["default"] === 1
-    }));
+    function getLang(tags = {}) {
+        const keys = Object.keys(tags);
+        const k = keys.find(k =>
+            ["language", "LANGUAGE", "Language", "lang", "LANG"].includes(k)
+        );
+        console.log("Audio tags:", k);
+
+        return k ? tags[k].toLowerCase() : "und";
+    }
+
+    const audioList = [];
+    let audioCount = 0;
+    for (const s of info.streams) {
+        if (s.codec_type === "audio") {
+            audioList.push({
+            ffprobeIndex: s.index,
+            mapIndex: audioCount++,
+            codec: s.codec_name,
+            channels: s.channels,
+            lang: getLang(s.tags),
+            default: s.disposition && s.disposition["default"] === 1
+            });
+        }
+    }
 
     res.json({
       format: {
