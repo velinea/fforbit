@@ -99,6 +99,27 @@ app.get("/api/search", async (req, res) => {
   });
 });
 
+function normalizeProbeData(raw) {
+  const info = JSON.parse(raw);
+
+  const streams = info.streams || info.programs?.flatMap(p => p.streams) || [];
+  for (const s of streams) {
+    // Normalize tag field names
+    s.tags = s.tags || s.stream_tags || {};
+    s.disposition = s.disposition || s.stream_disposition || {};
+
+    // 🪄 Flatten tags into top-level keys (prefixed if needed)
+    for (const [k, v] of Object.entries(s.tags)) {
+      const key = k.toLowerCase();
+      // Avoid overwriting existing properties like codec_name, etc.
+      if (!(key in s)) s[key] = v;
+    }
+  }
+
+  return info;
+}
+
+
 // ---- PROBE (single shot) ----
 app.get("/api/probe", async (req, res) => {
   const p = (req.query.path || "").trim();
@@ -106,23 +127,35 @@ app.get("/api/probe", async (req, res) => {
 
   try {
     const info = await ffprobeOnce(FFPROBE, p);
+    console.log("DEBUG streams:", JSON.stringify(info.streams, null, 2));
+
     // summarize what UI needs
     const v = info.streams.find(s => s.codec_type === "video") || {};
     const aStreams = info.streams.filter(s => s.codec_type === "audio");
     const format = info.format || {};
 
-    function getLang(tags = {}) {
-        const keys = Object.keys(tags);
-        const k = keys.find(k =>
-            ["language", "LANGUAGE", "Language", "lang", "LANG"].includes(k)
-        );
-        console.log("Audio tags:", k);
+    function getLang(s = {}) {
+      // Prefer language key if it exists
+      if (s.language) return s.language.toLowerCase();
 
-        return k ? tags[k].toLowerCase() : "und";
+      // Otherwise check flattened variants
+      const candidates = ["lang", "tag:language", "tag:lang"];
+      for (const k of candidates) if (s[k]) return s[k].toLowerCase();
+
+      // Fallback from title if it contains an abbreviation
+      if (s.title) {
+        const m = s.title.match(/\b(eng|fin|dan|swe|nor|spa|fre|ger|ita)\b/i);
+        if (m) return m[1].toLowerCase();
+      }
+
+      return "und";
     }
+
+
 
     const audioList = [];
     let audioCount = 0;
+    // const tags = s.tags || s.stream_tags || {};
     for (const s of info.streams) {
         if (s.codec_type === "audio") {
             audioList.push({
