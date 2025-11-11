@@ -11,7 +11,9 @@
     <header>
         <img id="logo" alt="FFOrbit logo" src="fforbit.png">
         <h1>FFOrbit</h1>
-        <input id="search" placeholder="Type to search… (min 3 chars)" />
+        <div id="searchField">
+            <img id="searchIcon" src="search.png"><input id="search" placeholder="Type to search… (min 3 chars)" />
+        </div>
     </header>
     <div id="results"></div>
 
@@ -25,7 +27,8 @@
                 </label>
             </div>
             <div class="arg2">
-                <label>Audio language:
+                <label><a href="https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes" target="_blank">
+                        Audio language:</a>
                     <input id="audioLang" value="eng" list="langs" />
                     <datalist id="langs">
                         <!-- top languages -->
@@ -46,26 +49,26 @@
                 <label>Transcode audio (AAC 6ch)<input type="checkbox" id="transAudio" /></label>
             </div>
             <div class="arg2">
+                <label>Transcode video (H.265)<input type="checkbox" id="transVideo" checked /></label>
+            </div>
+            <div class="arg2">
                 <label> Global quality <input id="gq" type="number" min="20" max="30" value="25" /></label>
             </div>
             <div class="arg2">
                 <label>Auto quality<div id="bitrateInfo"></div></label>
             </div>
-            <div class="arg2">
-                <label>Transcode video (H.265)<input type="checkbox" id="transVideo" checked /></label>
-            </div>
         </div>
     </section>
 
     <section id="queueSec">
-        <h3>Queue</h3>
         <div id="queue"></div>
     </section>
 
     <section id="logSec" style="display:none">
-        <h3>Live log</h3>
+        <div id="logTitle">
+            <h3>Live log</h3><button id="stop">⛔ Stop</button>
+        </div>
         <pre id="log"></pre>
-        <button id="stop">⛔ Stop</button>
     </section>
 
     <script src="app.js"></script>

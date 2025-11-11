@@ -36,7 +36,6 @@ h1 {
   letter-spacing: 0.05em;
   display: inline;
   padding-left: 1em;
-
 }
 
 fieldset {
@@ -199,10 +198,19 @@ button:disabled {
   clear: both;
   padding-top: 1em;
 }
+#searchIcon {
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+}
 #search {
+  display: inline-block;
+  width: 80%;
+}
+#searchField {
   float: right;
-  width: 30%;
-  margin-right: 1em;
+  margin-right: 0.5em;
+  width: 400px;
 }
 #argsContainer {
   width: 100%;
@@ -214,6 +222,18 @@ button:disabled {
 #bitrateInfo {
   display: inline-block;
   margin-left: 0.5em;
-  font-size: 0.8em;
+  font-size: 0.7em;
   color: var(--text);
+  background-color: var(--bg-panel);
+}
+#stop {
+  float:right;
+}
+#logTitle {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5em;
+}
+#logTitle h3 {
+  float: left;  
 }

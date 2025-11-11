@@ -128,7 +128,6 @@ app.get("/api/probe", async (req, res) => {
 
   try {
     const info = await ffprobeOnce(FFPROBE, p);
-    console.log("DEBUG streams:", JSON.stringify(info.streams, null, 2));
 
     // summarize what UI needs
     const video = info.streams.find(s => s.codec_type === "video");
@@ -137,7 +136,6 @@ app.get("/api/probe", async (req, res) => {
     const size = getFileSize(p);
     const avgMbps = computeAvgMbps(info, p);
     const suggestedCQ = autoQuality(avgMbps, video?.codec_name);
-    console.log(`PROBE ${p}: duration=${duration}s size=${size}B avgMbps=${avgMbps.toFixed(2)} suggestedCQ=${suggestedCQ}`);
     function getLang(s = {}) {
       // Prefer language key if it exists
       if (s.language) return s.language.toLowerCase();

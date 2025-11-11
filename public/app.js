@@ -42,7 +42,7 @@ results.addEventListener("click", async (e) => {
   ).join("");
   // if selected audio is already AAC, uncheck transAudio
   const def = (info.audio || [])[aSel.selectedIndex || 0];
-  $("#transAudio").checked = !(def && def.codec === "aac");
+  $("#transAudio").checked = !(def && (def.codec === "aac" || def.codec === "ac3" || def.codec === "eac3"));
   $("#audioLang").value = (def && def.lang) || "eng";
 
   const fmt = info.format;
@@ -94,7 +94,7 @@ async function refreshQueue() {
   queueDiv.innerHTML = `
     <div>Running: ${q.running ? `#${q.running.id} – ${q.running.path}` : "—"}</div>
     <div>Queued:</div>
-    <ul>${q.queued.map(j => `<li>#${j.id} – ${j.path}</li>`).join("") || "<li>—</li>"}</ul>
+    <ul>${q.queued.map(j => `<li>#${j.id} – ${j.path}</li>`).join("") || "<li></li>"}</ul>
   `;
 }
 setInterval(refreshQueue, 2000);
