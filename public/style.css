@@ -184,12 +184,17 @@ button:disabled {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.arg {
+.arg1, .arg2 {
   box-sizing: border-box;
-  width: 20%;
   float: left;
   padding: 0 0.5em;
 } 
+.arg1 {
+  width: 20%;
+}
+.arg2 {
+  width: 15%;
+}
 #queueSec {
   clear: both;
   padding-top: 1em;
@@ -205,4 +210,10 @@ button:disabled {
   border-radius: var(--radius);
   overflow: auto;
   padding: 0.5em 0;
+}
+#bitrateInfo {
+  display: inline-block;
+  margin-left: 0.5em;
+  font-size: 0.8em;
+  color: var(--text);
 }

@@ -19,12 +19,12 @@
         <div id="picked"></div>
         <button id="enqueue">➕ Add to queue</button>
         <div id="argsContainer">
-            <div class="arg">
+            <div class="arg1">
                 <label>Audio track:
                     <select id="audioIndex"></select>
                 </label>
             </div>
-            <div class="arg">
+            <div class="arg2">
                 <label>Audio language:
                     <input id="audioLang" value="eng" list="langs" />
                     <datalist id="langs">
@@ -42,14 +42,17 @@
                     </datalist>
                 </label>
             </div>
-            <div class="arg">
-                <label> Transcode audio (AAC 6ch) <input type="checkbox" id="transAudio" /></label>
+            <div class="arg2">
+                <label>Transcode audio (AAC 6ch)<input type="checkbox" id="transAudio" /></label>
             </div>
-            <div class="arg">
+            <div class="arg2">
                 <label> Global quality <input id="gq" type="number" min="20" max="30" value="25" /></label>
             </div>
-            <div class="arg">
-                <label> Transcode video (H.265) <input type="checkbox" id="transVideo" checked /></label>
+            <div class="arg2">
+                <label>Auto quality<div id="bitrateInfo"></div></label>
+            </div>
+            <div class="arg2">
+                <label>Transcode video (H.265)<input type="checkbox" id="transVideo" checked /></label>
             </div>
         </div>
     </section>

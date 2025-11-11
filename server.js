@@ -1,6 +1,7 @@
 // server.js
 import express from "express";
 import { createRunner, ffprobeOnce } from "./ffmpegRunner.js";
+import { parseDuration, getFileSize, autoQuality, computeAvgMbps} from "./utils.js";
 import fs from "fs";
 import path from "path";
 
@@ -131,13 +132,12 @@ app.get("/api/probe", async (req, res) => {
 
     // summarize what UI needs
     const video = info.streams.find(s => s.codec_type === "video");
-    const aStreams = info.streams.filter(s => s.codec_type === "audio");
     const format = info.format || {};
     const duration = parseDuration(video?.tags?.DURATION);
     const size = getFileSize(p);
-    const avgMbps = duration > 0 ? (size * 8) / duration / 1e6 : 0;
-    console.log(`Average bitrate: ${avgMbps.toFixed(2)} Mb/s`); 
-
+    const avgMbps = computeAvgMbps(info, p);
+    const suggestedCQ = autoQuality(avgMbps, video?.codec_name);
+    console.log(`PROBE ${p}: duration=${duration}s size=${size}B avgMbps=${avgMbps.toFixed(2)} suggestedCQ=${suggestedCQ}`);
     function getLang(s = {}) {
       // Prefer language key if it exists
       if (s.language) return s.language.toLowerCase();
@@ -154,25 +154,6 @@ app.get("/api/probe", async (req, res) => {
 
       return "und";
     }
-
-    function parseDuration(tagValue) {
-      if (!tagValue) return 0;
-      const parts = tagValue.split(":").map(Number);
-      if (parts.length < 3) return 0;
-      const [h, m, s] = parts;
-      return h * 3600 + m * 60 + s; // seconds
-    }
-
-    function getFileSize(path) {
-      try {
-        const { size } = fs.statSync(path);
-        return size; // bytes
-      } catch (e) {
-        console.error("Cannot stat file:", e);
-        return 0;
-      }
-    }
-
 
     const audioList = [];
     let audioCount = 0;
@@ -193,7 +174,8 @@ app.get("/api/probe", async (req, res) => {
       format: {
         duration,
         size,
-        avgMbps
+        avgMbps,
+        suggestedCQ
       },
       video: {
         codec: video?.codec_name,

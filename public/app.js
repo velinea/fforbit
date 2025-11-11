@@ -33,7 +33,7 @@ results.addEventListener("click", async (e) => {
     .then(r=>r.json());
   // set defaults based on probe
   // video: skip if hevc or bitrate already low
-  $("#transVideo").checked = !(info.video && (info.video.codec === "hevc" || info.video.bitrate > 2000000));
+  $("#transVideo").checked = !(info.video && (info.video.codec === "hevc" || info.format.avgMbps < 3));
   // audio: show tracks
   const aSel = $("#audioIndex");
   aSel.innerHTML = (info.audio || []).map((a,i) =>
@@ -44,6 +44,24 @@ results.addEventListener("click", async (e) => {
   const def = (info.audio || [])[aSel.selectedIndex || 0];
   $("#transAudio").checked = !(def && def.codec === "aac");
   $("#audioLang").value = (def && def.lang) || "eng";
+
+  const fmt = info.format;
+  const cq = fmt.suggestedCQ;
+  const avg = fmt.avgMbps?.toFixed(2);
+
+  // Show info text
+  document.getElementById("bitrateInfo").textContent =
+    `🎞 ${avg} Mb/s  →  Suggested GQ ${cq}`;
+
+  // Set slider / input automatically
+  const cqInput = document.getElementById("gq");
+  if (cqInput) cqInput.value = cq;
+
+  // Color-code efficiency
+  const c = avg < 2 ? "limegreen" :
+            avg < 4 ? "gold" :
+            avg < 6 ? "orange" : "crimson";
+  cqInput.style.borderColor = c;
 
   options.style.display = "";
 });
