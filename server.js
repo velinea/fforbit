@@ -130,9 +130,13 @@ app.get("/api/probe", async (req, res) => {
     console.log("DEBUG streams:", JSON.stringify(info.streams, null, 2));
 
     // summarize what UI needs
-    const v = info.streams.find(s => s.codec_type === "video") || {};
+    const video = info.streams.find(s => s.codec_type === "video");
     const aStreams = info.streams.filter(s => s.codec_type === "audio");
     const format = info.format || {};
+    const duration = parseDuration(video?.tags?.DURATION);
+    const size = getFileSize(p);
+    const avgMbps = duration > 0 ? (size * 8) / duration / 1e6 : 0;
+    console.log(`Average bitrate: ${avgMbps.toFixed(2)} Mb/s`); 
 
     function getLang(s = {}) {
       // Prefer language key if it exists
@@ -151,6 +155,23 @@ app.get("/api/probe", async (req, res) => {
       return "und";
     }
 
+    function parseDuration(tagValue) {
+      if (!tagValue) return 0;
+      const parts = tagValue.split(":").map(Number);
+      if (parts.length < 3) return 0;
+      const [h, m, s] = parts;
+      return h * 3600 + m * 60 + s; // seconds
+    }
+
+    function getFileSize(path) {
+      try {
+        const { size } = fs.statSync(path);
+        return size; // bytes
+      } catch (e) {
+        console.error("Cannot stat file:", e);
+        return 0;
+      }
+    }
 
 
     const audioList = [];
@@ -168,18 +189,17 @@ app.get("/api/probe", async (req, res) => {
             });
         }
     }
-
     res.json({
       format: {
-        duration: Number(format.duration || 0),
-        size: Number(format.size || 0),
-        bit_rate: Number(format.bit_rate || 0)
+        duration,
+        size,
+        avgMbps
       },
       video: {
-        codec: v.codec_name,
-        width: v.width,
-        height: v.height,
-        pix_fmt: v.pix_fmt
+        codec: video?.codec_name,
+        width: video?.width,
+        height: video?.height,
+        pix_fmt: video?.pix_fmt
       },
       audio: audioList
     });

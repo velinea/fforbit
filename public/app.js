@@ -32,8 +32,8 @@ results.addEventListener("click", async (e) => {
   const info = await fetch(`/api/probe?path=${encodeURIComponent(p)}`)
     .then(r=>r.json());
   // set defaults based on probe
-  // video: skip if hevc
-  $("#transVideo").checked = !(info.video && info.video.codec === "hevc");
+  // video: skip if hevc or bitrate already low
+  $("#transVideo").checked = !(info.video && (info.video.codec === "hevc" || info.video.bitrate > 2000000));
   // audio: show tracks
   const aSel = $("#audioIndex");
   aSel.innerHTML = (info.audio || []).map((a,i) =>
