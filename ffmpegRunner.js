@@ -12,7 +12,7 @@ export function createRunner({ ffmpegPath, vaapi, job, onData, onExit }) {
 
   // video transcode decision
   const transcodeVideo = o.transcodeVideo ?? true; // UI will set based on probe (skip if hevc)
-  const gq = Number(o.globalQuality ?? 29);
+  const gq = Number(o.globalQuality ?? 25);
 
   // audio transcode decision
   const transcodeAudio = o.transcodeAudio ?? false; // UI sets to false if AAC already
@@ -80,7 +80,8 @@ export function ffprobeOnce(ffprobePath, targetPath) {
   return new Promise((resolve, reject) => {
     const args = [
       "-v", "error",
-      "-show_entries", "format=duration,size,bit_rate:stream=index,codec_type,codec_name,width,height,pix_fmt,channels,disposition,tags",
+      "-show_entries",
+      "stream=index,codec_type,codec_name:stream_tags",
       "-of", "json",
       targetPath
     ];
