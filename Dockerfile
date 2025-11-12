@@ -1,45 +1,47 @@
 # syntax=docker/dockerfile:1
-FROM lscr.io/linuxserver/jellyfin:latest
+
+# Base image: Jellyfin for working ffmpeg + hw accel stack
+FROM linuxserver/jellyfin:latest
 
 LABEL maintainer="velinea"
 LABEL org.opencontainers.image.source="https://github.com/velinea/fforbit"
-LABEL org.opencontainers.image.description="FFOrbit – lightweight FFmpeg web UI with hardware acceleration"
 
+# Disable the Jellyfin service from starting automatically
+# Remove init references but keep ffmpeg binaries
+RUN rm -f /etc/s6-overlay/s6-rc.d/user/contents.d/svc-jellyfin \
+    /etc/s6-overlay/s6-rc.d/init-jellyfin-config \
+    /etc/s6-overlay/s6-rc.d/init-jellyfin-video || true
+
+# Install Node.js + npm (use Node 20 LTS)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl ca-certificates && \
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs vim && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
 WORKDIR /app
 
-# Remove heavy Jellyfin components
-# RUN rm -rf /etc/services.d/jellyfin
+# Copy app source
+COPY package*.json ./
+RUN npm install --omit=dev
 
-# Install PHP (lightweight, no Apache)
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-            vim bc && \
-    apt-get clean 
+COPY . .
 
-# Copy your UI and script
-COPY fforbit.png /app/
-COPY transcode.sh /app
-RUN chmod +x /app/transcode.sh
+# Set default envs
+ENV NODE_ENV=production \
+    TMP_DIR=/app/config/tmp \
+    PORT=5002
 
-# Create config directory (for logs and defaults)
-RUN mkdir -p /app/config && chmod -R 777 /app/config
-VOLUME ["/app/config"]
+# Expose the port your Node app uses
+EXPOSE 5002
 
-# Stop s6 from trying to start user services
-RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d/*
+# Ensure tmp exists
+RUN mkdir -p /app/config/tmp
 
-# Clean up to shrink image size
-RUN rm -rf /usr/share/doc /usr/share/man /usr/share/locale /tmp/* /var/tmp/*
+# Use node entrypoint
+CMD ["node", "server.js"]
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-  CMD curl -fs http://localhost:8080/health || exit 1
-# Reset log on container start
-RUN echo "🛰️ FFOrbit ready — no active jobs." > /app/config/last.log
-
-EXPOSE 8080
-ENTRYPOINT []
-CMD ["php", "-S", "0.0.0.0:8080", "-t", "/app"]
 
 LABEL org.opencontainers.image.title="FFOrbit"
 LABEL org.opencontainers.image.description="Simple FFmpeg Web UI."
