@@ -21,7 +21,7 @@ body {
   font-family: var(--font);
   background: var(--bg);
   color: var(--text);
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0.5em auto;
   padding: 0.5em;
 }
