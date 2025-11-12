@@ -14,7 +14,6 @@ const FFPROBE = "/usr/bin/ffprobe";
 const MEDIA_ROOTS = [
   "/data/media/Downloads/complete/Movies",
   "/data/media/Movies",
-  "./test"
 ];
 
 let nextId = 1;
@@ -254,5 +253,8 @@ app.get("/api/log/:id", (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 5002;
-app.listen(PORT, () => console.log(`FFOrbit API listening on :${PORT}`));
+app.listen(process.env.PORT || 5002, "0.0.0.0", () => {
+  console.log(`FFOrbit server running on port ${process.env.PORT || 5002}`);
+});
+
+
