@@ -40,7 +40,7 @@ EXPOSE 5002
 RUN mkdir -p /app/config/tmp
 
 # Use node entrypoint
-CMD ["node", "server.js"]
+CMD ["bash"]
 
 
 LABEL org.opencontainers.image.title="FFOrbit"
