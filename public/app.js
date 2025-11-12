@@ -46,6 +46,7 @@ results.addEventListener("click", async (e) => {
   $("#audioLang").value = (def && def.lang) || "eng";
 
   const fmt = info.format;
+  const cq = fmt.suggestedCQ;
   const avg = fmt.avgMbps?.toFixed(2);
 
   // Show info text
