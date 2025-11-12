@@ -40,12 +40,12 @@ EXPOSE 5002
 RUN mkdir -p /app/config/tmp
 
 # Use node entrypoint
-CMD ["bash"]
+CMD ["node", "server.js"]
 
 
 LABEL org.opencontainers.image.title="FFOrbit"
 LABEL org.opencontainers.image.description="Simple FFmpeg Web UI."
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.url="https://github.com/velinea/fforbit"
-LABEL io.unraid.docker.icon="https://raw.githubusercontent.com/velinea/fforbit/main/fforbit/fforbit.png"
+LABEL io.unraid.docker.icon="https://raw.githubusercontent.com/velinea/fforbit/main/public/fforbit/fforbit.png"
 
