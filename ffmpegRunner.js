@@ -3,6 +3,9 @@ import { spawn } from "child_process";
 import path from "path";
 import fs from "fs";
 
+const CONFIG_DIR = process.env.CONFIG_DIR || "/app/config";
+const TMP_DIR = path.join(CONFIG_DIR, "tmp");
+
 export function createRunner({ ffmpegPath, vaapi, job, onData, onExit }) {
   const o = job.opts || {};
 
@@ -102,9 +105,8 @@ export function ffprobeOnce(ffprobePath, targetPath) {
 }
 
 function tempOut(p) {
-  const dir = path.dirname(p);
   const base = path.basename(p).replace(/\.(mkv|mp4|avi)$/i, "");
-  return path.join(dir, `${base}.fforbit.tmp.mkv`);
+  return path.join(TMP_DIR, `${base}.fforbit.tmp.mkv`);
 }
 
 function folderName(p) {
