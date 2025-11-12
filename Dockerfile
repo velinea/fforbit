@@ -8,7 +8,7 @@ LABEL org.opencontainers.image.source="https://github.com/velinea/fforbit"
 
 # Disable the Jellyfin service from starting automatically
 # Remove init references but keep ffmpeg binaries
-RUN rm -f /etc/s6-overlay/s6-rc.d/user/contents.d \
+RUN rm -rf /etc/s6-overlay/s6-rc.d/user/contents.d \
     /etc/s6-overlay/s6-rc.d/init-jellyfin-config \
     /etc/s6-overlay/s6-rc.d/init-jellyfin-video || true
 
