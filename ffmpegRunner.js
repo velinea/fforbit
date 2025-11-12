@@ -20,7 +20,7 @@ export function createRunner({ ffmpegPath, vaapi, job, onData, onExit }) {
 
   const baseArgs = [
     "-hide_banner",
-    "vaapi_device", vaapi,
+    "-vaapi_device", vaapi,
     "-i", job.path,
     "-map", "0:v:0",
     "-map", `0:a:${keepAudio}`,
