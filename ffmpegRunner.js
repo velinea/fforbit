@@ -105,8 +105,9 @@ export function ffprobeOnce(ffprobePath, targetPath) {
 }
 
 function tempOut(p) {
-  const base = path.basename(p).replace(/\.(mkv|mp4|avi)$/i, "");
-  return path.join(TMP_DIR, `${base}.fforbit.tmp.mkv`);
+  const extension = path.extname(p);
+  const base = path.basename(p, extension);
+  return path.join(TMP_DIR, `${base}.fforbit.tmp.${extension}`);
 }
 
 function folderName(p) {

@@ -121,7 +121,7 @@ pre {
   color: #0f0;
   padding: 1em;
   border-radius: var(--radius);
-  height: 300px;
+  height: 200px;
   overflow-y: auto;
   overflow-x: auto;
   font-family: monospace;
