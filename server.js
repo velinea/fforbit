@@ -9,8 +9,8 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
-const FFMPEG = "/usr/bin/ffmpeg";
-const FFPROBE = "/usr/bin/ffprobe";
+const FFMPEG = "/usr/lib/jellyfin-ffmpeg/ffmpeg";
+const FFPROBE = "/usr/lib/jellyfin-ffmpeg/ffprobe";
 const MEDIA_ROOTS = [
   "/data/media/Downloads/complete/Movies",
   "/data/media/Movies",
