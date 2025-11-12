@@ -92,7 +92,7 @@ $("#stop").addEventListener("click", async () => {
 async function refreshQueue() {
   const q = await fetch("/api/queue").then(r=>r.json());
   queueDiv.innerHTML = `
-    <div>Running: ${q.running ? `#${q.running.id} – ${q.running.path}` : "—"}</div>
+    <div>Running: ${q.running ? `#${q.running.id} – ${q.running.path}` : ""}</div>
     <div>Queued:</div>
     <ul>${q.queued.map(j => `<li>#${j.id} – ${j.path}</li>`).join("") || "<li></li>"}</ul>
   `;

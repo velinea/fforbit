@@ -197,6 +197,7 @@ button:disabled {
 #queueSec {
   clear: both;
   padding-top: 1em;
+  color: var(--success)
 }
 #searchIcon {
   height: 20px;
