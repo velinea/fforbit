@@ -40,8 +40,8 @@ EXPOSE 5002
 RUN mkdir -p /app/config/tmp
 
 # Use node entrypoint
+ENTRYPOINT []
 CMD ["node", "server.js"]
-
 
 LABEL org.opencontainers.image.title="FFOrbit"
 LABEL org.opencontainers.image.description="Simple FFmpeg Web UI."
