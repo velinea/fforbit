@@ -13,6 +13,7 @@ const FFMPEG = "/usr/lib/jellyfin-ffmpeg/ffmpeg";
 const FFPROBE = "/usr/lib/jellyfin-ffmpeg/ffprobe";
 const MEDIA_ROOTS = [
   "/data/media/Downloads/complete/Movies",
+  "/data/media/Movies",
 ];
 
 let nextId = 1;
