@@ -51,7 +51,7 @@ results.addEventListener("click", async (e) => {
 
   // Show info text
   document.getElementById("bitrateInfo").textContent =
-    `🎞 ${avg} Mb/s  →  Suggested GQ ${cq}`;
+    `${avg} Mb/s → GQ ${cq}`;
 
   // Set slider / input automatically
   const cqInput = document.getElementById("gq");

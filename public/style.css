@@ -224,7 +224,6 @@ button#enqueue {
 #bitrateInfo {
   display: inline-block;
   margin-left: 0.5em;
-  font-size: 0.7em;
   color: var(--text);
   background-color: var(--bg-panel);
 }
