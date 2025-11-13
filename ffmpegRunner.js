@@ -63,8 +63,8 @@ export function createRunner({ ffmpegPath, vaapi, job, onData, onExit }) {
       const stats = fs.statSync(outPath);
       if (stats.size > 1_000_000) {
         fs.renameSync(outPath, job.path);
-        await fs.promises.chown(path, 99, 100);   // nobody:users
-        await fs.promises.chmod(path, 0o666);     // rw-rw-rw-
+        await fs.promises.chown(job.path, 99, 100);   // nobody:users
+        await fs.promises.chmod(job.path, 0o666);     // rw-rw-rw-
       } else {
         fs.rmSync(outPath, { force: true });
         onData("❌ output invalid/too small — original kept");
