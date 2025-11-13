@@ -78,7 +78,6 @@ input:focus {
 
 button {
   background: var(--accent);
-  color: rgb(224, 185, 13);
   border: none;
   cursor: pointer;
   font-weight: 500;
@@ -170,6 +169,7 @@ button:disabled {
   width: 75%;
   height: 40px;
   background-color: var(--bg-panel);
+  color: rgb(224, 185, 13);
   float: left;
 }
 button#enqueue {
