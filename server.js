@@ -3,6 +3,7 @@ import express from "express";
 import { createRunner, ffprobeOnce } from "./ffmpegRunner.js";
 import { parseDuration, getFileSize, autoQuality, computeAvgMbps} from "./utils.js";
 import fs from "fs";
+import { exec } from "child_process";
 import path from "path";
 
 const app = express();
@@ -73,28 +74,35 @@ function closeClients(job) {
 
 // ---- SEARCH (fuzzy-ish) ----
 // finds after 3+ chars, across configured roots, newest first
-app.get("/api/search", async (req, res) => {
+app.get("/api/search", (req, res) => {
   const q = (req.query.q || "").trim();
-  if (q.length < 3) return res.json([]);
-  // use find via shell to leverage the filesystem efficiently
-  const child_process = await import("child_process");
-  const { exec } = child_process.default;
-  const patterns = ["*.mkv", "*.mp4", "*.avi"];
-  const roots = MEDIA_ROOTS.filter(r => fs.existsSync(r));
-  if (!roots.length) return res.json([]);
+  if (!q) return res.json([]);
 
-  const cmds = roots.map(root =>
-    `find ${JSON.stringify(root)} -type f \\( ${patterns.map(p => `-iname '${p}'`).join(" -o ")} \\) -printf '%T@ %p\\n'`
-  );
-  exec(cmds.join(" ; ") + " | sort -nr | cut -d' ' -f2-", (err, stdout) => {
-    if (err) return res.json([]);
+  const roots = MEDIA_ROOTS;
+  const patterns = ["*.mkv", "*.mp4", "*.avi"];
+
+  // Build a single combined find command:
+  const findCmd =
+    `find ${roots.map(r => `"${r}"`).join(" ")} ` +
+    `-type f \\( ${patterns.map(p => `-iname "${p}"`).join(" -o ")} \\) ` +
+    `-printf '%T@ %p\\n'`;
+
+  const cmd = `${findCmd} | sort -nr | cut -d' ' -f2-`;
+
+  exec(cmd, (err, stdout) => {
+    if (err) {
+      console.error("search error", err);
+      return res.json([]);
+    }
+
     const all = stdout.split("\n").filter(Boolean);
     const lower = q.toLowerCase();
-    // very simple fuzzy: contains, ignoring case; rank by filename match closeness
+
     const hits = all
       .map(p => ({ p, name: path.basename(p) }))
       .filter(x => x.name.toLowerCase().includes(lower))
       .slice(0, 60);
+
     res.json(hits);
   });
 });

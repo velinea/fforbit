@@ -78,7 +78,7 @@ input:focus {
 
 button {
   background: var(--accent);
-  color: white;
+  color: rgb(224, 185, 13);
   border: none;
   cursor: pointer;
   font-weight: 500;
