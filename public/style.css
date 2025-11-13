@@ -43,7 +43,7 @@ fieldset {
   border-radius: var(--radius);
   background: var(--bg-panel);
   padding: 1.5em;
-  margin-top: 1.5em;
+  margin-top: 1.0em;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
@@ -60,8 +60,8 @@ legend {
 
 input, button, select {
   font-size: 1em;
-  padding: 0.4em 0.6em;
-  margin-top: 0.3em;
+  padding: 0.4em 0.2em;
+  margin-top: 0.2em;
   border-radius: 5px;
   border: 1px solid var(--border);
   background: #20242d;
@@ -172,12 +172,13 @@ button:disabled {
   background-color: var(--bg-panel);
   float: left;
 }
-#enqueue {
+button#enqueue {
   float: right;
 }
 #results {
-  margin-top: 1em;
-  height: 100px;
+  margin-top: 0.5em;
+  padding: 0.5em;
+  height: 80px;
   overflow-y: auto;
   cursor: pointer;
   border: 1px solid var(--border);
@@ -227,14 +228,12 @@ button:disabled {
   color: var(--text);
   background-color: var(--bg-panel);
 }
-#stop {
+button#stop {
   float:right;
+  height: 2.2em;
 }
 #logTitle {
   display: flex;
+  padding-left: 0.5em;
   justify-content: space-between;
-  margin-bottom: 0.5em;
-}
-#logTitle h3 {
-  float: left;  
 }
