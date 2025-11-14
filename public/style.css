@@ -10,6 +10,7 @@
   --accent-soft: #3a9bd6;
   --danger: #ff6b6b;
   --success: #2ecc71;
+  --note: #bb780d;
   --border: #2c313c;
   --radius: 10px;
   --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -169,7 +170,7 @@ button:disabled {
   width: 75%;
   height: 40px;
   background-color: var(--bg-panel);
-  color: rgb(224, 185, 13);
+  color: var(--note);
   float: left;
 }
 button#enqueue {
@@ -223,7 +224,7 @@ button#enqueue {
 }
 #bitrateInfo {
   display: inline-block;
-  margin-left: 0.5em;
+  padding: 0.5em;
   color: var(--text);
   background-color: var(--bg-panel);
 }
