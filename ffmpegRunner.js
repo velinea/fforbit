@@ -86,7 +86,7 @@ export function ffprobeOnce(ffprobePath, targetPath) {
     const args = [
       "-v", "error",
       "-show_entries",
-      "stream=index,codec_type,codec_name,bit_rate,channels:stream_tags",
+      "stream=index,codec_type,codec_name,bit_rate,duration,channels:stream_tags",
       "-of", "json",
       targetPath
     ];

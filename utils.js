@@ -28,8 +28,8 @@ export function computeAvgMbps(info, filePath) {
   let duration = parseDuration(video?.tags?.DURATION);
 
   // 2️⃣ Otherwise from container
-  if (!duration && info.format?.duration) {
-    duration = Number(info.format.duration);
+  if (!duration && video.duration) {
+    duration = video.duration);
   }
 
   // 3️⃣ Compute average bitrate if possible
