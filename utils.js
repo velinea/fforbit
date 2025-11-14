@@ -29,7 +29,7 @@ export function computeAvgMbps(info, filePath) {
 
   // 2️⃣ Otherwise from container
   if (!duration && video.duration) {
-    duration = video.duration);
+    duration = video.duration;
   }
 
   // 3️⃣ Compute average bitrate if possible
