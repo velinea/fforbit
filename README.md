@@ -24,7 +24,7 @@ These examples are for Intel hw. All Jellyfin supported hardware transcoding met
 #### Docker
     docker run -d --name fforbit \
       --device /dev/dri:/dev/dri \
-      -e TMP_DIR=/mnt/user/media/Downloads/tmp \
+      -e TMP_DIR=/data/media/Downloads/tmp \
       -v /mnt/user/media:/data/media \
       -v /mnt/user/appdata/fforbit:/app/config \
       -p 5002:5002 ghcr.io/velinea/fforbit:latest
@@ -35,7 +35,7 @@ services:
     devices:
       - /dev/dri:/dev/dri
     environment:
-      - TMP_DIR=/mnt/user/media/Downloads/tmp
+      - TMP_DIR=/data/media/Downloads/tmp
     volumes:
       - /mnt/user/media:/data/media
       - /mnt/user/appdata/fforbit:/app/config
