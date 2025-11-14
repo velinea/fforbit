@@ -24,35 +24,37 @@ These examples are for Intel hw. All Jellyfin supported hardware transcoding met
 #### Docker
     docker run -d --name fforbit \
       --device /dev/dri:/dev/dri \
+      -e TMP_DIR=/mnt/user/media/Downloads/tmp \
       -v /mnt/user/media:/data/media \
       -v /mnt/user/appdata/fforbit:/app/config \
       -p 5002:5002 ghcr.io/velinea/fforbit:latest
 #### Docker Compose
-    services:
-      fforbit:
-        container_name: fforbit
-        devices:
-          - /dev/dri:/dev/dri
-        volumes:
-          - /mnt/user/media:/data/media
-          - /mnt/user/appdata/fforbit:/app/config
-        ports:
-          - 5002:5002
-        image: ghcr.io/velinea/fforbit:latest
+services:
+  fforbit:
+    container_name: fforbit
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      - TMP_DIR=/mnt/user/media/Downloads/tmp
+    volumes:
+      - /mnt/user/media:/data/media
+      - /mnt/user/appdata/fforbit:/app/config
+    ports:
+      - 5002:5002
+    image: ghcr.io/velinea/fforbit:latest
 #### Unraid
 ## Usage
 ![Opening view](docs/1.png)
 Go to http://\<local_ip\>:5002
 
 ![Type search string](docs/2.png)
-Type search string, after 3 chars you start getting candidates, newest first
+Type search string, after 3 chars you start getting candidates, newest first.
 
 ![Pick a movie](docs/3.png)
-When you click a movie in the pickup list, FFOrbit gives you info about the encoding settings. If there are more than one audio streams, you can pick the one you want to keep and set its language. FFOrbit suggests audio transcode if the file is DTS or FLAC encoded. It suggests video transcode if the video is encoded with anything else than h265 and if the bit rate is reasonably high (>3 Mb/s>). It also suggests Global quality aiming to file size 1-1.5 MB/h.
+When you click a movie in the pickup list, FFOrbit gives you info about the encoding settings. If there are more than one audio streams, you can pick the one you want to keep and set its language. FFOrbit suggests audio transcode if the file is DTS or FLAC encoded. It suggests video transcode if the video is encoded with anything else than h265 and if the bit rate is reasonably high (>3 Mb/s>). It also suggests Global quality targeting to file size 1-1.5 MB/h.
 
 ![Transcode settings](docs/4.png)
 Start transcode by clicking 'Add to queue' and you see live FFmpeg ouput log below. You can stop the process any time by clicking 'Stop'.
 ## Notes
+- I like to keep TMP_DIR in the same file system as the media, so that after job is complete the file can be just renamed and there is no need to copy it anywhere.
 - License: [MIT](https://github.com/velinea/fforbit/blob/main/LICENSE.md)
-
-

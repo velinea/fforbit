@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 
 const CONFIG_DIR = process.env.CONFIG_DIR || "/app/config";
-const TMP_DIR = "/data/media/Downloads/tmp";
+const TMP_DIR = process.env.TMP_DIR || "/data/media/Downloads/tmp";
 
 export function createRunner({ ffmpegPath, vaapi, job, onData, onExit }) {
   const o = job.opts || {};
