@@ -62,7 +62,13 @@ export function createRunner({ ffmpegPath, vaapi, job, onData, onExit }) {
     try {
       const stats = fs.statSync(outPath);
       if (stats.size > 1_000_000) {
-        fs.renameSync(outPath, job.path);
+        try  {
+          fs.renameSync(outPath, job.path);
+        } catch (e) {
+          // cross-device rename?
+          fs.copyFileSync(outPath, job.path);
+          fs.rmSync(outPath);
+        }
         fixPermissions(job.path);
       } else {
         fs.rmSync(outPath, { force: true });
