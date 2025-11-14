@@ -132,7 +132,8 @@ footer {
   color: #888;
   position:fixed;
   bottom:0.5em;
-  left:45%;
+  left: 50%;
+  transform: translateX(-50%);
 } 
 button.danger {
   background: #d33;
