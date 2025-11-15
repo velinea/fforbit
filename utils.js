@@ -46,7 +46,7 @@ export function computeAvgMbps(info, filePath) {
 export function autoQuality(avgMbps, codec = "hevc") {
   if (avgMbps < 3) return 23;
   if (avgMbps < 4) return 24;
-  if (avgMbps < 5) return 25;
+  if (avgMbps < 6) return 25;
   if (avgMbps < 8) return 27;
   return 28;
 }
