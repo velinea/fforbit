@@ -146,17 +146,6 @@ app.get("/api/probe", async (req, res) => {
     function getLang(s = {}) {
       // Prefer language key if it exists
       if (s.language) return s.language.toLowerCase();
-
-      // Otherwise check flattened variants
-      const candidates = ["lang", "tag:language", "tag:lang"];
-      for (const k of candidates) if (s[k]) return s[k].toLowerCase();
-
-      // Fallback from title if it contains an abbreviation
-      if (s.title) {
-        const m = s.title.match(/\b(eng|fin|dan|swe|nor|spa|fre|ger|ita)\b/i);
-        if (m) return m[1].toLowerCase();
-      }
-
       return "und";
     }
 
