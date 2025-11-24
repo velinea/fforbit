@@ -47,5 +47,5 @@ LABEL org.opencontainers.image.title="FFOrbit"
 LABEL org.opencontainers.image.description="Simple FFmpeg Web UI."
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.url="https://github.com/velinea/fforbit"
-LABEL io.unraid.docker.icon="https://raw.githubusercontent.com/velinea/fforbit/main/public/fforbit/fforbit.png"
+LABEL io.unraid.docker.icon="https://raw.githubusercontent.com/velinea/fforbit/main/public/logo.png"
 
