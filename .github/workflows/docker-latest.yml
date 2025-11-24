@@ -3,8 +3,6 @@ name: Build and Push (latest)
 on:
   push:
     branches: [main]
-    tags:
-      - latest
   workflow_dispatch:
 
 jobs:
@@ -31,7 +29,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/fforbit:latest
+          tags: ghcr.io/${{ github.repository }}:latest
           platforms: linux/amd64
           build-args: |
             BUILDKIT_INLINE_CACHE=1
