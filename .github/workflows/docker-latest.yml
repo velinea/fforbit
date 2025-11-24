@@ -2,7 +2,9 @@ name: Build and Push (latest)
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
+    tags:
+      - latest
   workflow_dispatch:
 
 jobs:
