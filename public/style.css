@@ -1,6 +1,6 @@
 /* ==============================
    FFOrbit – Orbit Dark Console Theme
-   ============================== 
+   ==============================
 */
 :root {
   --bg: #0f1115;
@@ -13,10 +13,8 @@
   --note: #bb780d;
   --border: #2c313c;
   --radius: 10px;
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
-
-
 
 body {
   font-family: var(--font);
@@ -27,7 +25,9 @@ body {
   padding: 0.5em;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: var(--accent);
   font-weight: 500;
 }
@@ -44,7 +44,7 @@ fieldset {
   border-radius: var(--radius);
   background: var(--bg-panel);
   padding: 1.5em;
-  margin-top: 1.0em;
+  margin-top: 1em;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
@@ -59,7 +59,9 @@ legend {
   font-weight: 600;
 }
 
-input, button, select {
+input,
+button,
+select {
   font-size: 1em;
   padding: 0.4em 0.2em;
   margin-top: 0.2em;
@@ -130,11 +132,11 @@ pre {
 footer {
   font-size: 0.85em;
   color: #888;
-  position:fixed;
-  bottom:0.5em;
+  position: fixed;
+  bottom: 0.5em;
   left: 50%;
   transform: translateX(-50%);
-} 
+}
 button.danger {
   background: #d33;
   color: white;
@@ -148,10 +150,9 @@ button.danger:hover {
 }
 #logo {
   display: inline-block;
-  height: 40px;
+  height: 60px;
   vertical-align: middle;
-  margin-right: 1rem;
-  }
+}
 #status-line {
   font-size: 1rem;
   background: #161b22;
@@ -186,11 +187,12 @@ button#enqueue {
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.arg1, .arg2 {
+.arg1,
+.arg2 {
   box-sizing: border-box;
   float: left;
   padding: 0 0.5em;
-} 
+}
 .arg1 {
   width: 20%;
 }
@@ -200,7 +202,7 @@ button#enqueue {
 #queueSec {
   clear: both;
   padding-top: 1em;
-  color: var(--success)
+  color: var(--success);
 }
 #searchIcon {
   height: 20px;
@@ -230,7 +232,7 @@ button#enqueue {
   background-color: var(--bg-panel);
 }
 button#stop {
-  float:right;
+  float: right;
   height: 2.2em;
 }
 #logTitle {
