@@ -31,8 +31,6 @@ export function computeAvgMbps(info, filePath) {
   if (!duration && video.duration) {
     duration = video.duration;
   }
-  console.log('Computed duration:', duration);
-
   // 3️⃣ Compute average bitrate if possible
   if (duration > 0 && size > 0) {
     return (size * 8) / duration / 1e6; // Mb/s
