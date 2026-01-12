@@ -31,6 +31,7 @@ export function computeAvgMbps(info, filePath) {
   if (!duration && video.duration) {
     duration = video.duration;
   }
+  console.log('Computed duration:', duration);
 
   // 3️⃣ Compute average bitrate if possible
   if (duration > 0 && size > 0) {
@@ -43,9 +44,8 @@ export function computeAvgMbps(info, filePath) {
 }
 
 export function autoQuality(avgMbps, codec = 'hevc') {
-  if (avgMbps < 4) return 23;
-  if (avgMbps < 5) return 24;
-  if (avgMbps < 7) return 25;
-  if (avgMbps < 9) return 27;
-  return 28;
+  if (avgMbps < 5) return 23;
+  if (avgMbps < 7) return 24;
+  if (avgMbps < 9) return 25;
+  return 26;
 }
