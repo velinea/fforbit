@@ -1,21 +1,18 @@
 // server.js
-import express from "express";
-import { createRunner, ffprobeOnce } from "./ffmpegRunner.js";
-import { parseDuration, getFileSize, autoQuality, computeAvgMbps} from "./utils.js";
-import fs from "fs";
-import { exec } from "child_process";
-import path from "path";
+import express from 'express';
+import { createRunner, ffprobeOnce } from './ffmpegRunner.js';
+import { parseDuration, getFileSize, autoQuality, computeAvgMbps } from './utils.js';
+import fs from 'fs';
+import { exec } from 'child_process';
+import path from 'path';
 
 const app = express();
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static('public'));
 
-const FFMPEG = "/usr/lib/jellyfin-ffmpeg/ffmpeg";
-const FFPROBE = "/usr/lib/jellyfin-ffmpeg/ffprobe";
-const MEDIA_ROOTS = [
-  "/data/media/Downloads/complete/Movies",
-  "/data/media/Movies",
-];
+const FFMPEG = '/usr/lib/jellyfin-ffmpeg/ffmpeg';
+const FFPROBE = '/usr/lib/jellyfin-ffmpeg/ffprobe';
+const MEDIA_ROOT = '/data/media/Movies';
 
 let nextId = 1;
 const queue = []; // {id, path, opts, state, logBuffer, clients: Set(res)}
@@ -39,11 +36,11 @@ let current = null;
 function runNext() {
   if (current || queue.length === 0) return;
   current = queue.shift();
-  current.state = "running";
+  current.state = 'running';
 
   const runner = createRunner({
     ffmpegPath: FFMPEG,
-    vaapi: "/dev/dri/renderD128",
+    vaapi: '/dev/dri/renderD128',
     job: current,
     onData: line => broadcast(current, line),
     onExit: (code, signal) => {
@@ -52,7 +49,7 @@ function runNext() {
       closeClients(current);
       current = null;
       runNext();
-    }
+    },
   });
 
   current.stop = () => runner.stop();
@@ -62,40 +59,42 @@ function runNext() {
 function broadcast(job, line) {
   job.logBuffer.push(line);
   for (const res of job.clients) {
-    res.write(`data: ${line.replace(/\n/g, "")}\n\n`);
+    res.write(`data: ${line.replace(/\n/g, '')}\n\n`);
   }
   // avoid unbounded memory
   if (job.logBuffer.length > 5000) job.logBuffer.splice(0, 4000);
 }
 function closeClients(job) {
-  for (const res of job.clients) try { res.end(); } catch {}
+  for (const res of job.clients)
+    try {
+      res.end();
+    } catch {}
   job.clients.clear();
 }
 
 // ---- SEARCH (fuzzy-ish) ----
 // finds after 3+ chars, across configured roots, newest first
-app.get("/api/search", (req, res) => {
-  const q = (req.query.q || "").trim();
+app.get('/api/search', (req, res) => {
+  const q = (req.query.q || '').trim();
   if (!q) return res.json([]);
 
-  const roots = MEDIA_ROOTS;
-  const patterns = ["*.mkv", "*.mp4", "*.avi"];
+  const patterns = ['*.mkv', '*.mp4', '*.avi'];
 
   // Build a single combined find command:
   const findCmd =
-    `find ${roots.map(r => `"${r}"`).join(" ")} ` +
-    `-type f \\( ${patterns.map(p => `-iname "${p}"`).join(" -o ")} \\) ` +
+    `find ${MEDIA_ROOT} ` +
+    `-type f \\( ${patterns.map(p => `-iname "${p}"`).join(' -o ')} \\) ` +
     `-printf '%T@ %p\\n'`;
 
   const cmd = `${findCmd} | sort -nr | cut -d' ' -f2-`;
 
   exec(cmd, (err, stdout) => {
     if (err) {
-      console.error("search error", err);
+      console.error('search error', err);
       return res.json([]);
     }
 
-    const all = stdout.split("\n").filter(Boolean);
+    const all = stdout.split('\n').filter(Boolean);
     const lower = q.toLowerCase();
 
     const hits = all
@@ -127,17 +126,16 @@ function normalizeProbeData(raw) {
   return info;
 }
 
-
 // ---- PROBE (single shot) ----
-app.get("/api/probe", async (req, res) => {
-  const p = (req.query.path || "").trim();
-  if (!p) return res.status(400).json({ error: "no path" });
+app.get('/api/probe', async (req, res) => {
+  const p = (req.query.path || '').trim();
+  if (!p) return res.status(400).json({ error: 'no path' });
 
   try {
     const info = await ffprobeOnce(FFPROBE, p);
 
     // summarize what UI needs
-    const video = info.streams.find(s => s.codec_type === "video");
+    const video = info.streams.find(s => s.codec_type === 'video');
     const format = info.format || {};
     const duration = parseDuration(video?.tags?.DURATION);
     const size = getFileSize(p);
@@ -146,57 +144,57 @@ app.get("/api/probe", async (req, res) => {
     function getLang(s = {}) {
       // Prefer language key if it exists
       if (s.language) return s.language.toLowerCase();
-      return "und";
+      return 'und';
     }
 
     const audioList = [];
     let audioCount = 0;
     // const tags = s.tags || s.stream_tags || {};
     for (const s of info.streams) {
-        if (s.codec_type === "audio") {
-            audioList.push({
-            ffprobeIndex: s.index,
-            mapIndex: audioCount++,
-            codec: s.codec_name,
-            channels: s.channels,
-            lang: getLang(s.tags),
-            default: s.disposition && s.disposition["default"] === 1
-            });
-        }
+      if (s.codec_type === 'audio') {
+        audioList.push({
+          ffprobeIndex: s.index,
+          mapIndex: audioCount++,
+          codec: s.codec_name,
+          channels: s.channels,
+          lang: getLang(s.tags),
+          default: s.disposition && s.disposition['default'] === 1,
+        });
+      }
     }
     res.json({
       format: {
         duration,
         size,
         avgMbps,
-        suggestedCQ
+        suggestedCQ,
       },
       video: {
         codec: video?.codec_name,
         width: video?.width,
         height: video?.height,
-        pix_fmt: video?.pix_fmt
+        pix_fmt: video?.pix_fmt,
       },
-      audio: audioList
+      audio: audioList,
     });
   } catch (e) {
-    res.status(500).json({ error: "probe failed", detail: String(e) });
+    res.status(500).json({ error: 'probe failed', detail: String(e) });
   }
 });
 
 // ---- ENQUEUE ----
-app.post("/api/enqueue", (req, res) => {
+app.post('/api/enqueue', (req, res) => {
   const { path: p, opts } = req.body || {};
-  if (!p) return res.status(400).json({ error: "no path" });
+  if (!p) return res.status(400).json({ error: 'no path' });
 
   const id = nextId++;
   const job = {
     id,
     path: p,
     opts: opts || {},
-    state: "queued",
+    state: 'queued',
     logBuffer: [],
-    clients: new Set()
+    clients: new Set(),
   };
   queue.push(job);
   runNext();
@@ -204,7 +202,7 @@ app.post("/api/enqueue", (req, res) => {
 });
 
 // ---- STOP ----
-app.post("/api/stop/:id", (req, res) => {
+app.post('/api/stop/:id', (req, res) => {
   const id = Number(req.params.id);
   if (current && current.id === id && current.stop) {
     current.stop();
@@ -216,42 +214,52 @@ app.post("/api/stop/:id", (req, res) => {
     queue.splice(idx, 1);
     return res.json({ ok: true, cancelled: true });
   }
-  res.status(404).json({ error: "job not found/running" });
+  res.status(404).json({ error: 'job not found/running' });
 });
 
 // ---- QUEUE STATUS ----
-app.get("/api/queue", (req, res) => {
+app.get('/api/queue', (req, res) => {
   res.json({
-    running: current ? { id: current.id, path: current.path, state: current.state } : null,
-    queued: queue.map(j => ({ id: j.id, path: j.path, state: j.state }))
+    running: current
+      ? { id: current.id, path: current.path, state: current.state }
+      : null,
+    queued: queue.map(j => ({ id: j.id, path: j.path, state: j.state })),
   });
 });
 
 // ---- SSE LOG STREAM ----
-app.get("/api/log/:id", (req, res) => {
+app.get('/api/log/:id', (req, res) => {
   const id = Number(req.params.id);
-  const job = (current && current.id === id) ? current : queue.find(j => j.id === id);
+  const job = current && current.id === id ? current : queue.find(j => j.id === id);
   if (!job) return res.status(404).end();
 
   res.writeHead(200, {
-    "Content-Type": "text/event-stream",
-    "Cache-Control": "no-cache",
-    Connection: "keep-alive"
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive',
   });
 
   // send history first
   for (const line of job.logBuffer) {
-    res.write(`data: ${line.replace(/\n/g, "")}\n\n`);
+    res.write(`data: ${line.replace(/\n/g, '')}\n\n`);
   }
   job.clients.add(res);
 
-  req.on("close", () => {
+  req.on('close', () => {
     job.clients.delete(res);
   });
 });
 
-app.listen(process.env.PORT || 5002, "0.0.0.0", () => {
-  console.log(`FFOrbit server running on port ${process.env.PORT || 5002}`);
+// ---- ARTWORK SERVING ----
+app.get('/api/artwork/:movie', (req, res) => {
+  const artwork = path.join(MEDIA_ROOT, req.params.movie, 'backdrop.jpg');
+  if (fs.existsSync(artwork)) {
+    res.sendFile(artwork);
+  } else {
+    res.status(404).end();
+  }
 });
 
-
+app.listen(process.env.PORT || 5002, '0.0.0.0', () => {
+  console.log(`FFOrbit server running on port ${process.env.PORT || 5002}`);
+});
