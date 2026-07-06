@@ -10,7 +10,6 @@ I have a large collection of movies and I have already processed them with a lib
   - set the movie folder name as metadata title
   - remove all other streams except first video and the audio you choose to keep
 #### On your choice
-  - keep the audio stream you choose (if many)
   - set audio language code
   - transcode audio (AAC 5.1)
   - transcode video (h265) 
