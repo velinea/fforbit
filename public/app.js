@@ -144,6 +144,6 @@ function startLogSSE(id) {
 }
 
 function setbgBackdrop(movieName) {
-  document.body.style.backgroundImage = `linear-gradient(rgba(2,6,23,.7), rgba(2,6,23,.9)),
+  document.body.style.backgroundImage = `linear-gradient(rgba(2,6,23,.8), rgba(2,6,23,1)),
      url("/api/artwork/${encodeURIComponent(movieName)}")`;
 }
